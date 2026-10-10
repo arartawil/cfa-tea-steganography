@@ -1,0 +1,13 @@
+bpc,detector,method,baseline,n,mean_PE_ours,mean_PE_base,delta,wilcoxon_stat,p_value
+0.1,cfa,ours_xtea_d4,hill_sim,10,0.4568,0.0,0.4568,0.0,0.001953125
+0.1,cfa,ours_xtea_d4,lsbm,10,0.4568,0.0,0.4568,0.0,0.001953125
+0.1,cfa,ours_xtea_d4,lsbr,10,0.4568,0.0,0.4568,0.0,0.001953125
+0.1,cfa,ours_tea_d4,hill_sim,10,0.4542,0.0,0.4542,0.0,0.001953125
+0.1,cfa,ours_tea_d4,lsbm,10,0.4542,0.0,0.4542,0.0,0.001953125
+0.1,cfa,ours_tea_d4,lsbr,10,0.4542,0.0,0.4542,0.0,0.001953125
+0.1,spam,ours_xtea_d4,hill_sim,10,0.4012,0.2808,0.1204,0.0,0.001953125
+0.1,spam,ours_xtea_d4,lsbm,10,0.4012,0.0,0.4012,0.0,0.001953125
+0.1,spam,ours_xtea_d4,lsbr,10,0.4012,0.0,0.4012,0.0,0.001953125
+0.1,spam,ours_tea_d4,hill_sim,10,0.3977,0.2808,0.1169,0.0,0.001953125
+0.1,spam,ours_tea_d4,lsbm,10,0.3977,0.0,0.3977,0.0,0.001953125
+0.1,spam,ours_tea_d4,lsbr,10,0.3977,0.0,0.3977,0.0,0.001953125

@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this code or these results, please cite the paper."
+title: "Secure RGB Image Steganography Based on the Tiny Encryption Algorithm and Color Filter Array Consistency"
+authors:
+  - family-names: Almazaydeh
+    given-names: Laiali
+  - family-names: Al Tawil
+    given-names: Arar
+  - family-names: Al-Qudah
+    given-names: Rabiah
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/arartawil/cfa-tea-steganography"
+preferred-citation:
+  type: article
+  title: "Secure RGB Image Steganography Based on the Tiny Encryption Algorithm and Color Filter Array Consistency"
+  authors:
+    - family-names: Almazaydeh
+      given-names: Laiali
+    - family-names: Al Tawil
+      given-names: Arar
+    - family-names: Al-Qudah
+      given-names: Rabiah
+  journal: "Computers, Materials & Continua"
+  year: 2026
+  notes: "Under review, submission ID 92460"

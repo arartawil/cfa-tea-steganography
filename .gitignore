@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+runs/
+.ipynb_checkpoints/
+analysis/tables/
+analysis/figures/

@@ -1,0 +1,6 @@
+method,bpc,status,detector,init,attempts,final_lr,n_train_pairs,n_val_pairs,n_test_pairs,crop,epochs,selected_epoch,val_P_E,P_E,P_E_lo,P_E_hi,AUC,AUC_lo,AUC_hi,spam_ref_P_E,verdict,seconds
+lsbm,0.2,ok,YeNet-SRM,scratch,1,0.0001,1200,300,400,256,60,5,0.0,0.0,0.0,0.0,1.0,1.0,1.0,0.0,trained,2728.7
+ours_naive_d1,0.2,ok,YeNet-SRM,curriculum,1,0.0001,1200,300,400,256,45,45,0.34333,0.32625,0.29375,0.34125,0.76362,0.73314,0.79207,,trained,1532.3
+ours_xtea_d4,0.2,ok,YeNet-SRM,curriculum,1,0.0001,1200,300,400,256,45,43,0.37333,0.3825,0.35875,0.3975,0.68016,0.65192,0.70809,0.325,DID_NOT_TRAIN,1855.6
+ours_xtea_d4,0.1,ok,YeNet-SRM,curriculum,3,1.1111111111111112e-05,1200,300,400,256,45,6,0.49167,0.49375,0.48625,0.49375,0.49976,0.49871,0.50089,0.401,DID_NOT_TRAIN,1263.6
+ours_sim_d4,0.4,ok,YeNet-SRM,curriculum,3,1.1111111111111112e-05,1200,300,400,256,45,7,0.485,0.485,0.475,0.4875,0.50628,0.50472,0.50871,0.323,DID_NOT_TRAIN,1401.0
