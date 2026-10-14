@@ -1,5 +1,7 @@
 # CFA-consistent image steganography with TEA/XTEA
 
+**Version cited in the paper: v1.1.0** (git tag `v1.1.0`). See `CHANGELOG.md`.
+
 Code, experiment notebooks and result files for
 
 > L. Almazaydeh, A. Al Tawil, R. Al-Qudah, *Secure RGB Image Steganography Based on the
@@ -50,7 +52,7 @@ detector, which needs PyTorch and preferably a GPU.
 
 ```
 pip install -r requirements.txt          # numpy, scipy, pandas, scikit-image, pillow, matplotlib, pytest
-pip install -r requirements-gpu.txt      # adds torch, only for k6c
+pip install -r requirements-gpu.txt      # adds torch, only for k6c and k6d
 ```
 
 No other configuration is needed. All seeds are fixed in the code: the cover sample
@@ -104,7 +106,7 @@ swap the red and blue lattices), and develops it with the chosen kernel before u
 ## Reproducing the results
 
 Each result in the paper comes from one notebook. The notebooks run unchanged on
-Kaggle, with the ALASKA#2 competition data attached and the GPU off except for k6c.
+Kaggle, with the ALASKA#2 competition data attached and the GPU off except for k6c and k6d.
 To run one locally instead:
 
 ```
@@ -115,18 +117,30 @@ python experiments/run_local.py --notebook experiments/notebooks/<name>.ipynb \
 Add `--quick` for a small smoke run in proof mode, which takes minutes rather than
 hours.
 
-| Paper result | Notebook | Output | Approx. time (4-core CPU) |
-|---|---|---|---|
-| Correctness, distortion, violation (Tables 3–6, Figs 2–3); robustness (Table 15) | `k7_reseeded_distortion_robustness` | `A_*`, `C_*` | 3–4 h |
-| Detectability over ten splits, Wilcoxon (Tables 7–9, Fig. 4) | `k1-k5_revision_cpu` (RUN_K="1") + `k1b_payloads_010_040` | `K1_*`, `K1b_*` | 2–3 h each |
-| Learned steganalysis (Tables 2 and 10, Fig. 5) | `k6c_learned_steganalysis_gpu` | `K6c_*` | ~3 h on one GPU |
-| One-factor ablation (Tables 11–12, Fig. 6) | `k8a_one_factor_ablation` | `K8a_*` | ~4 h |
-| Sensitivity (Table 13, Fig. 7): distortion columns | `k1-k5_revision_cpu` (RUN_K="3") | `K3_*` | ~1 h |
-| Sensitivity (Table 13, Fig. 7): P_E columns | `k8b_sensitivity_steganalysis` | `K8b_*` | ~2.5 h |
-| Kernel mismatch (Table 14, Fig. 8) | `k1-k5_revision_cpu` (RUN_K="4") | `K4_*` | < 1 h |
-| Cost and hardware (Table 16) | `k9_hardware_cost_comparison` | `K9_*` | ~20 min |
+| Paper result | Notebook | Config | Output | Approx. time |
+|---|---|---|---|---|
+| Correctness, distortion, violation (Tables 3–6, Figs 2–3); robustness (Table 16) | `k7_reseeded_distortion_robustness` | `configs/k7_*.json` | `A_*`, `C_*` | 3–4 h CPU |
+| Detectability over ten splits, Wilcoxon (Tables 7–9, Fig. 4) | `k1-k5_revision_cpu` (RUN_K="1") + `k1b_payloads_010_040` | `configs/k1-k5_*.json`, `configs/k1b_*.json` | `K1_*`, `K1b_*` | 2–3 h CPU each |
+| Learned detector, exploratory run (Tables 2 and 10) | `k6c_learned_steganalysis_gpu` | `configs/k6c_*.json` | `K6c_*` | ~3 h GPU |
+| Learned detector, three seeds (Table 11, Fig. 5) | `k6d_learned_steganalysis_seed2026/2027/2028` | `configs/k6d_*.json` | `K6d_*` | ~2.5 h GPU each |
+| One-factor ablation (Tables 12–13, Fig. 6) | `k8a_one_factor_ablation` | `configs/k8a_*.json` | `K8a_*` | ~4 h CPU |
+| Sensitivity, distortion columns (Table 14, Fig. 7) | `k1-k5_revision_cpu` (RUN_K="3") | `configs/k1-k5_*.json` | `K3_*` | ~1 h CPU |
+| Sensitivity, P_E and AUC columns (Table 14, Fig. 7) | `k8b_sensitivity_steganalysis` | `configs/k8b_*.json` | `K8b_*` | ~2.5 h CPU |
+| Kernel mismatch (Table 15, Fig. 8) | `k1-k5_revision_cpu` (RUN_K="4") | `configs/k1-k5_*.json` | `K4_*` | < 1 h CPU |
+| Cost and hardware (Table 17) | `k9_hardware_cost_comparison` | `configs/k9_*.json` | `K9_*` | ~20 min CPU |
 
-Table and figure numbers refer to the second-round revision of the paper.
+Table and figure numbers refer to the third-round revision of the paper. Each file in
+`configs/` lists the effective constants of the corresponding notebook as it was run
+(sample sizes, crop, payloads, seeds, epochs, thresholds), extracted from the notebook
+source.
+
+**Exact versus statistical reproduction.** The cover sample, the detector splits and
+the learned-detector pairs and splits are seeded with fixed integers and reproduce
+exactly. In the CPU studies the per-image message and nonce draws were seeded from
+Python's built-in `hash()`, which is salted per process, so a re-run reproduces those
+results statistically (within the reported confidence intervals) rather than bit for
+bit. `run_local.py` fixes `PYTHONHASHSEED=0`, so local re-runs are repeatable among
+themselves. The K6d notebooks use `crc32` instead and are deterministic in their pairs.
 
 Every notebook writes its CSV incrementally, so an interrupted run keeps everything it
 finished. To rebuild the tables and figures from `results/`:

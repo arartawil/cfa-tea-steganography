@@ -294,11 +294,12 @@ tbl("t8b_ablation_det.tex",
 #  Round 2 (R1-4): sensitivity with P_E. Distortion from K3 (300 covers),
 #  detectability from K8b (1000 pairs, ten splits); payload P_E from K1/K1b.
 K8B=pd.read_csv(f"{D}/K8b_summary.csv"); K8B=K8B[K8B.metric=="P_E"]
-def _pb(arm,setting,det):
-    g=K8B[(K8B.arm==arm)&(K8B.setting==setting)&(K8B.detector==det)]
+K8BA=pd.read_csv(f"{D}/K8b_summary.csv")
+def _pb(arm,setting,det,metric="P_E"):
+    g=K8BA[(K8BA.arm==arm)&(K8BA.setting==setting)&(K8BA.detector==det)&(K8BA.metric==metric)]
     return NA if not len(g) else f"{g['mean'].iloc[0]:.3f}"
-def _p1(b,det):
-    g=S[(S.method=="ours_xtea_d4")&np.isclose(S.bpc,b)&(S.detector==det)&(S.metric=="P_E")]
+def _p1(b,det,metric="P_E"):
+    g=S[(S.method=="ours_xtea_d4")&np.isclose(S.bpc,b)&(S.detector==det)&(S.metric==metric)]
     return NA if not len(g) else f"{g['mean'].iloc[0]:.3f}"
 SENS = [("kernel_support", "Demosaicing kernel support (0.20 bpc)", "kernel",
          {"support_3x3_bilinear": (r"bilinear, $3\times3$","support_3x3_bilinear"),
@@ -315,32 +316,31 @@ SENS = [("kernel_support", "Demosaicing kernel support (0.20 bpc)", "kernel",
           "cost_aware": ("HILL-cost ordered (oracle, not extractable)","cost_aware_oracle")})]
 rows = []
 for axis, title, arm, mapping in SENS:
-    rows.append([r"\multicolumn{6}{l}{\textit{" + title + r"}}"])
+    rows.append([r"\multicolumn{8}{l}{\textit{" + title + r"}}"])
     a = K3[(K3.axis == axis) & (K3.status == "ok")]
     for k, (lab, key) in mapping.items():
         s_ = a[a.setting == k]
         if not len(s_):
             continue
-        if arm is None:
-            pe_s, pe_c = _p1(key,"spam"), _p1(key,"cfa")
-        else:
-            pe_s, pe_c = _pb(arm,key,"spam"), _pb(arm,key,"cfa")
+        f = _p1 if arm is None else (lambda k, d, m="P_E", _a=arm: _pb(_a, k, d, m))
         rows.append([r"\quad " + lab, f"{s_.psnr.mean():.2f}",
                      f"{s_.change_rate.mean():.4f}", f"{s_.efficiency.mean():.2f}",
-                     pe_s, pe_c])
+                     f(key,"spam"), f(key,"spam","AUC"), f(key,"cfa"), f(key,"cfa","AUC")])
 tbl("t9_sensitivity.tex",
-    ["Setting", "PSNR", "Change", "Eff.", "$P_E$ SPAM", "$P_E$ struct."], rows,
+    ["Setting", "PSNR", "Change", "Eff.", "$P_E$ SPAM", "AUC SPAM", "$P_E$ struct.", "AUC struct."], rows,
     "Sensitivity of the proposed scheme to its design parameters, varied one at "
     "a time around the reported configuration. Distortion is averaged over 300 "
     "covers; $P_E$ is the mean over ten pair-preserving splits of 1000 "
-    "cover--stego pairs. Bit error rate and violation rate are zero in every row.",
+    "cover--stego pairs, and AUC is averaged over the same splits. For $P_E$ higher "
+    "is harder to detect; for AUC lower is harder to detect. Bit error rate and "
+    "violation rate are zero in every row.",
     "tab:sensitivity",
     "Payload-axis $P_E$ values come from the main detectability study "
     "(Tables~\\ref{tab:pe_cfa} and \\ref{tab:pe_spam}); payloads not evaluated "
     "there are marked \\textemdash. The cost-ordered row is an oracle: the "
     "receiver cannot reproduce a carrier order computed from the cover, so it "
     "bounds what side-informed coding could add rather than describing a "
-    "working variant.", align="lccccc")
+    "working variant.", align="lccccccc", fit=True)
 
 # ================================================================= TABLE 9 ==
 rows = []
@@ -381,7 +381,7 @@ for _, r in K6.iterrows():
 tbl("t11_cnn.tex",
     ["Configuration", "bpc", "Role", "Attempts", "Epochs run", "$P_E$ [95\\% CI]", "AUC",
      "SPAM $P_E$", "Outcome"], rows,
-    "Learned steganalysis with an SRM-initialized convolutional detector "
+    "Exploratory run of the learned detector (one training seed, 45 epochs): an SRM-initialized convolutional detector "
     "(Table~\\ref{tab:cnncfg}) trained on cover--stego pairs produced by the "
     "proposed embedder itself: 1200 training, 300 validation and 400 test pairs. "
     "The epoch is selected on validation and $P_E$ is reported on the test split.",
@@ -393,6 +393,36 @@ tbl("t11_cnn.tex",
     "detector would reach and supports no comparative conclusion. Only the two "
     "control rows are interpreted.", align="lcccccccc", fit=True)
 
+# Round 3 (R1-1): three independent training seeds at 0.20 bpc
+K6D = pd.concat([pd.read_csv(f"{D}/K6d_seed{sd}.csv") for sd in (2026, 2027, 2028)])
+CONV = {"converged": "converged", "still_improving": "still improving", "did_not_train": "did not train"}
+rows = []
+for m, lab in (("lsbm", "LSB matching (control 1)"), ("ours_naive_d1", r"CFA-domain LSB matching, $d_1$ (control 2)"),
+               ("ours_xtea_d4", r"Proposed (XTEA), $d_4$")):
+    g = K6D[K6D.method == m].sort_values("train_seed")
+    for k, (_, r) in enumerate(g.iterrows()):
+        dnt = r.convergence == "did_not_train"
+        rows.append([lab if k == 0 else "", f"{int(r.train_seed)}", f"{int(r.attempts)}", f"{int(r.epochs_run)}",
+                     NA if dnt else f"{r.P_E:.3f} [{r.P_E_lo:.3f}, {r.P_E_hi:.3f}]",
+                     NA if dnt else f"{r.AUC:.3f}", CONV[r.convergence]])
+    ok = g[g.convergence != "did_not_train"]
+    sdp = f" $\\pm$ {ok.P_E.std(ddof=1):.3f}" if len(ok) > 1 else ""
+    sda = f" $\\pm$ {ok.AUC.std(ddof=1):.3f}" if len(ok) > 1 else ""
+    rows.append([r"\quad \textit{mean over trained seeds}", f"{len(ok)} of {len(g)}", "", "",
+                 f"{ok.P_E.mean():.3f}{sdp}", f"{ok.AUC.mean():.3f}{sda}", ""])
+    if m != "ours_xtea_d4": rows.append(["__RULE__"])
+tbl("t11c_cnnseeds.tex",
+    ["Configuration", "Seed", "Attempts", "Epochs run", "$P_E$ [95\\% CI]", "AUC", "Status"], rows,
+    "Learned detector repeated over three independent training seeds at 0.20 bits "
+    "per pixel-channel. Pairs and the 1200/300/400 split are identical across seeds; "
+    "only weight initialization, batch order and augmentation change. 90 epochs "
+    "(control 1: 30).",
+    "tab:cnnseeds",
+    "Status follows the convergence rule of Table~\\ref{tab:cnncfg}. Means and "
+    "standard deviations are over the seeds that trained. SPAM-686 reaches "
+    "$P_E=0.325$ on the proposed configuration (Table~\\ref{tab:pe_spam}).",
+    align="lcccccc", fit=True)
+
 CFG = [("Architecture", r"Ye-Net style \cite{ye2017deep}: SRM front end, 7 conv.\ stages, global average pooling, linear layer"),
        ("Front end", r"30 SRM $5\times5$ kernels per channel (90 maps), SRM-initialized, trainable, reflect padding"),
        ("Activation after front end", r"truncated linear unit, $T=3$"),
@@ -402,13 +432,14 @@ CFG = [("Architecture", r"Ye-Net style \cite{ye2017deep}: SRM front end, 7 conv.
        ("Optimizer", r"Adam, weight decay $10^{-4}$, gradient-norm clipping at 5"),
        ("Learning rate", r"$10^{-4}$; constant for 10 epochs, then cosine decay to 0"),
        ("Batch", "16 pairs (32 images) per step"),
-       ("Epochs", "60 for control 1 (from scratch), 45 otherwise"),
+       ("Epochs", "exploratory run: 60 for control 1, 45 otherwise; repeated runs: 30 for control 1, 90 otherwise"),
        ("Initialization", "control 1 from scratch; every later run from the control-1 weights"),
        ("Augmentation", r"random rotation by $k\cdot90^\circ$ and horizontal flip, applied identically to both images of a pair"),
        ("Model selection", "epoch with the lowest validation $P_E$; test split never used for selection"),
        ("Collapse rule", r"a run still within $2\times10^{-3}$ of $\ln2$, with accuracy within 0.02 of 0.5 and validation $P_E>0.47$, at epoch 8 is stopped and restarted at one third of the learning rate, at most twice"),
        ("Data split", "1200 / 300 / 400 pairs, permutation seed 2026; pairs never split across partitions"),
-       ("Seeds", r"PyTorch and NumPy seeded with 2026 per run; one training seed per configuration"),
+       ("Seeds", r"exploratory run: training seed 2026; repeated runs: training seeds 2026, 2027, 2028 with pairs and split fixed (split seed 2026)"),
+       ("Convergence", r"converged if the best validation $P_E$ of the last 15 epochs is at most 0.005 below the best before them; otherwise still improving"),
        ("Confidence interval", "2000 bootstrap resamples of the test pairs"),
        ("Hardware", "one Kaggle GPU session (CUDA), PyTorch")]
 tbl("t11b_cnncfg.tex", ["Item", "Setting"], [[a_, b_] for a_, b_ in CFG],

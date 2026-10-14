@@ -1,0 +1,217 @@
+{
+  "notebook": "experiments/notebooks/k6d_learned_steganalysis_seed2026.ipynb",
+  "note": "effective full-mode constants, extracted automatically from the notebook source",
+  "constants": {
+    "A_COLS": [
+      "image",
+      "method",
+      "demosaic",
+      "bpc",
+      "change_rate",
+      "actual_bpc",
+      "ber",
+      "mosaic_exact",
+      "regime",
+      "status",
+      "capacity_bpc",
+      "bits_per_carrier",
+      "psnr",
+      "ssim",
+      "viol_rate",
+      "hamming_p",
+      "efficiency"
+    ],
+    "B_COLS": [
+      "method",
+      "bpc",
+      "detector",
+      "n_pairs",
+      "n_train",
+      "n_test",
+      "dsub",
+      "oob_err",
+      "P_E",
+      "AUC",
+      "n_features"
+    ],
+    "C_COLS": [
+      "image",
+      "method",
+      "demosaic",
+      "bpc",
+      "attack",
+      "n_bits",
+      "ber",
+      "psnr_attacked",
+      "status"
+    ],
+    "DSH": [
+      [
+        null,
+        null
+      ],
+      [
+        4,
+        1.5
+      ],
+      [
+        1.5,
+        1.5
+      ],
+      [
+        5,
+        1.5,
+        1,
+        1.5
+      ],
+      [
+        3,
+        1,
+        3,
+        1
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        8,
+        2,
+        1,
+        2
+      ]
+    ],
+    "HILL_DYN": 10000.0,
+    "K1_METHODS": [
+      "ours_xtea_d4",
+      "ours_tea_d4",
+      "ours_sim_d4",
+      "hill_sim",
+      "lsbm",
+      "lsbr",
+      "almazaydeh20"
+    ],
+    "K2_METHODS": [
+      "ours_xtea_d4",
+      "ours_tea_d4",
+      "ours_noenc_d4",
+      "ours_nocode_d4",
+      "ours_naive_d1",
+      "ours_sim_d4"
+    ],
+    "K3_P_SWEEP_BPC": 0.05,
+    "K6_BATCH": 16,
+    "K6_BOOT": 2000,
+    "K6_CONFIGS": [
+      [
+        "lsbm",
+        0.2
+      ],
+      [
+        "ours_naive_d1",
+        0.2
+      ],
+      [
+        "ours_xtea_d4",
+        0.2
+      ]
+    ],
+    "K6_CROP": 256,
+    "K6_CTRL_EPOCHS": 30,
+    "K6_CTRL_MAX": 0.1,
+    "K6_EPOCHS": 90,
+    "K6_LR": 0.0001,
+    "K6_MODE": "full",
+    "K6_RETRIES": 2,
+    "K6_SEED": 2026,
+    "K6_SPLIT_SEED": 2026,
+    "K6_TEST_PAIRS": 400,
+    "K6_TLU_T": 3.0,
+    "K6_TRAIN_PAIRS": 1200,
+    "K6_VAL_PAIRS": 300,
+    "K6_WARM": 10,
+    "K6_WATCH_EP": 8,
+    "K6_WATCH_TOL": 0.002,
+    "MIN_CELL_FRAC": 0.9,
+    "MODE": "full",
+    "MRK": [
+      "o",
+      "s",
+      "^",
+      "D",
+      "v",
+      "P",
+      "X",
+      "*"
+    ],
+    "NAIVE_MAX_PE": 0.45,
+    "PAL": [
+      "#0072B2",
+      "#D55E00",
+      "#009E73",
+      "#CC79A7",
+      "#E69F00",
+      "#56B4E9",
+      "#8C564B",
+      "#666666"
+    ],
+    "PLATEAU_TOL": 0.005,
+    "PLATEAU_WIN": 15,
+    "REV_MODE": "full",
+    "ROBUST_BPCS": [
+      0.05,
+      0.1
+    ],
+    "ROBUST_METHODS": [
+      "ours_xtea_d4",
+      "ours_tea_d4",
+      "ours_xtea_d1",
+      "ours_naive_d1",
+      "lsbr",
+      "lsbm",
+      "almazaydeh20"
+    ],
+    "RUN_K": "12345",
+    "RV_CROP": 256,
+    "RV_ENS_L": 51,
+    "RV_N_IMG": 300,
+    "RV_N_PROF": 50,
+    "RV_N_STEG": 1000,
+    "RV_PAYLOADS": [
+      0.05,
+      0.1,
+      0.2,
+      0.4
+    ],
+    "RV_SAMPLE_SEED": 20261003,
+    "RV_SPLITS": 10,
+    "RV_STEG_PAY": [
+      0.05,
+      0.2
+    ],
+    "SEED": 0,
+    "SEED_STATE": {
+      "w": null
+    },
+    "SPAM_MARGIN": 0.03,
+    "SPAM_T": 3,
+    "STAGES": "ABCD",
+    "STEG_METHODS": [
+      "ours_sim_d4",
+      "ours_sim_d1",
+      "ours_xtea_d4",
+      "ours_tea_d4",
+      "lsbm",
+      "lsbr",
+      "hill_sim",
+      "almazaydeh20"
+    ],
+    "_RESOLVED": {
+      "dir": null
+    }
+  }
+}

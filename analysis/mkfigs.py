@@ -128,28 +128,35 @@ axes[2].set_ylim(0.40,0.50); axes[2].legend(frameon=False,loc="lower right"); ax
 save(fig,"F4_sensitivity")
 
 # ---------------------------------------------------------------- FIG 7 ----
-#  Round 2 (R1-3): training curves of the learned detector, final attempt per cell
-CU=pd.read_csv(f"{D}/K6c_curves.csv")
-cells=[("lsbm",0.20,"Control 1: LSB matching, 0.20"),("ours_naive_d1",0.20,"Control 2: CFA LSBM $d_1$, 0.20"),
-       ("ours_xtea_d4",0.20,"Proposed (XTEA) $d_4$, 0.20"),("ours_xtea_d4",0.10,"Proposed (XTEA) $d_4$, 0.10"),
-       ("ours_sim_d4",0.40,"Distortion bound (sim.), 0.40")]
-fig,axes=plt.subplots(1,2,figsize=(13.6,4.6))
-for (mth,b,nm),c in zip(cells,[CB[6],CB[3],CB[0],CB[1],CB[2]]):
-    g=CU[(CU.method==mth)&np.isclose(CU.bpc,b)]
-    att=list(g.attempt.unique())
-    for k,a in enumerate(att):
-        h=g[g.attempt==a].sort_values("epoch")
-        lb=nm+(f" ({len(att)} attempts)" if len(att)>1 else "") if k==0 else None
-        axes[0].plot(h.epoch,h.train_loss,color=c,lw=2.0 if len(att)==1 else 1.4,label=lb,
-                     ls="-" if len(att)==1 else (0,(4,1+k)))
-        axes[1].plot(h.epoch,h.val_P_E,color=c,lw=2.0 if len(att)==1 else 1.4,label=lb,
-                     ls="-" if len(att)==1 else (0,(4,1+k)))
-axes[0].axhline(np.log(2),color="grey",ls=":",lw=1.2); axes[0].text(46,np.log(2)+0.02,"ln 2",fontsize=10.5,color="grey")
-axes[0].set_xlabel("Epoch"); axes[0].set_ylabel("Training cross-entropy"); axes[0].set_title("Training loss")
-axes[1].axhline(0.5,color="grey",ls=":",lw=1.2)
-axes[1].set_xlabel("Epoch"); axes[1].set_ylabel("Validation $P_E$"); axes[1].set_title("Validation error")
-h,l=axes[1].get_legend_handles_labels()
-fig.legend(h,l,frameon=False,fontsize=10.5,loc="lower center",ncol=3,bbox_to_anchor=(0.5,-0.13))
+#  Round 3 (R1-1): learned detector over three training seeds, 0.20 bpc
+CU=pd.concat([pd.read_csv(f"{D}/K6d_curves_seed{sd}.csv").assign(seed=sd) for sd in (2026,2027,2028)])
+SC={2026:CB[0],2027:CB[1],2028:CB[2]}
+fig,axes=plt.subplots(1,3,figsize=(16.2,4.5))
+for ax,(m,ttl) in zip(axes[:2],(("ours_xtea_d4","Proposed (XTEA) $d_4$: validation $P_E$"),
+                              ("ours_naive_d1","Control 2, CFA LSBM $d_1$: validation $P_E$"))):
+    for sd in (2026,2027,2028):
+        g=CU[(CU.seed==sd)&(CU.method==m)]
+        att=list(g.attempt.unique())
+        for k,a_ in enumerate(att):
+            h=g[g.attempt==a_].sort_values("epoch")
+            last=(k==len(att)-1)
+            ax.plot(h.epoch,h.val_P_E,color=SC[sd],lw=2.0 if last and len(h)>10 else 1.2,
+                    ls="-" if len(h)>10 else ":",label=None)
+    ax.axhline(0.5,color="grey",ls=":",lw=1.0)
+    if m=="ours_xtea_d4": ax.axhline(0.325,color=CB[6],ls="--",lw=1.1); ax.text(2,0.317,"SPAM-686, $P_E$ = 0.325",fontsize=10,va="top")
+    ax.set_ylim(0.25,0.52); ax.set_xlabel("Epoch"); ax.set_ylabel("Validation $P_E$"); ax.set_title(ttl,fontsize=13)
+    from matplotlib.lines import Line2D
+    hs=[Line2D([0],[0],color=SC[sd],lw=2) for sd in (2026,2027,2028)]+[Line2D([0],[0],color="k",lw=1.2,ls=":")]
+    ax.legend(hs,["seed 2026","seed 2027","seed 2028","abandoned attempt"],frameon=False,loc="lower left" if m!="ours_xtea_d4" else "upper right",fontsize=10)
+for sd in (2026,2027,2028):
+    g=CU[(CU.seed==sd)&(CU.method=="ours_xtea_d4")]
+    for k,a_ in enumerate(g.attempt.unique()):
+        h=g[g.attempt==a_].sort_values("epoch")
+        axes[2].plot(h.epoch,h.train_loss,color=SC[sd],lw=2.0 if len(h)>10 else 1.2,ls="-" if len(h)>10 else ":",
+                     label=None)
+axes[2].axhline(np.log(2),color="grey",ls=":",lw=1.2); axes[2].text(60,np.log(2)+0.008,"ln 2",fontsize=10.5,color="grey")
+axes[2].set_xlabel("Epoch"); axes[2].set_ylabel("Training cross-entropy"); axes[2].set_title("Proposed (XTEA) $d_4$: training loss",fontsize=13)
+axes[2].legend(hs,["seed 2026","seed 2027","seed 2028","abandoned attempt"],frameon=False,loc="upper right",fontsize=10)
 save(fig,"F7_cnn_curves")
 
 # ---------------------------------------------------------------- FIG 5 ----

@@ -1,0 +1,4 @@
+method,bpc,status,detector,init,attempts,final_lr,n_train_pairs,n_val_pairs,n_test_pairs,crop,epochs,selected_epoch,val_P_E,P_E,P_E_lo,P_E_hi,AUC,AUC_lo,AUC_hi,spam_ref_P_E,verdict,seconds,epochs_run,late_gain,convergence,train_seed,split_seed
+lsbm,0.2,ok,YeNet-SRM,scratch,1,0.0001,1200,300,400,256,30,6,0.0,0.0,0.0,0.0,1.0,1.0,1.0,0.0,trained,1439.2,30,0.0,converged,2026,2026
+ours_naive_d1,0.2,ok,YeNet-SRM,curriculum,1,0.0001,1200,300,400,256,90,81,0.34333,0.34625,0.3125,0.36375,0.73551,0.7023,0.76928,,trained,2789.9,90,0.00167,converged,2026,2026
+ours_xtea_d4,0.2,ok,YeNet-SRM,curriculum,3,1.1111111111111112e-05,1200,300,400,256,90,8,0.48667,0.49125,0.48,0.49,0.50209,0.50028,0.50427,0.325,DID_NOT_TRAIN,1191.3,8,,did_not_train,2026,2026

@@ -12,7 +12,8 @@ and `analysis/mkfigs.py`. They are released under CC BY 4.0.
 | `K3_sensitivity.csv` | `k1-k5_revision_cpu` (RUN_K=3) | distortion part of the sensitivity table |
 | `K4_*.csv` | `k1-k5_revision_cpu` (RUN_K=4) | kernel-mismatch table and figure |
 | `K5_cost_profile.csv` | `k1-k5_revision_cpu` (RUN_K=5) | first-round cost profile (timed under memory tracing) |
-| `K6c_*.csv` | `k6c_learned_steganalysis_gpu` | learned-detector table and training curves |
+| `K6c_*.csv` | `k6c_learned_steganalysis_gpu` | exploratory learned-detector run |
+| `K6d_*.csv` | `k6d_learned_steganalysis_seed*` | learned detector over three training seeds |
 | `K8a_*.csv` | `k8a_one_factor_ablation` | one-factor ablation, distortion and detectability |
 | `K8b_*.csv` | `k8b_sensitivity_steganalysis` | P_E part of the sensitivity table and figure |
 | `K9_*` | `k9_hardware_cost_comparison` | hardware record and cost comparison |

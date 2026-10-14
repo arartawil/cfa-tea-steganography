@@ -11,6 +11,12 @@ images and at an output folder, and executes it.
 """
 import argparse, json, os, re, runpy, sys, tempfile
 
+# Python salts str hashes per process; several notebooks derive per-image seeds
+# from hash(). Re-launch with a fixed PYTHONHASHSEED so a local run is repeatable.
+if os.environ.get("PYTHONHASHSEED") != "0":
+    os.environ["PYTHONHASHSEED"] = "0"
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+
 ap = argparse.ArgumentParser()
 ap.add_argument("--notebook", required=True)
 ap.add_argument("--images", required=True, help="folder with the ALASKA#2 cover JPEGs")
