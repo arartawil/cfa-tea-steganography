@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.1 (editorial revision)
+- `analysis/make_fig2_visual.py`: regenerates Figure 2 (visual example) from ALASKA#2
+  `Cover/00001.jpg` with the extractable scheme and LSB matching at 0.20 bpc.
+
 ## v1.1.0 (third-round revision)
 - Learned detector repeated over three independent training seeds (`k6d_*` notebooks,
   `results/K6d_*`), 90 epochs, identical pairs and split across seeds, explicit

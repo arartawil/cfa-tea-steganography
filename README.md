@@ -1,6 +1,6 @@
 # CFA-consistent image steganography with TEA/XTEA
 
-**Version cited in the paper: v1.1.0** (git tag `v1.1.0`). See `CHANGELOG.md`.
+**Version cited in the paper: v1.1.1** (git tag `v1.1.1`). See `CHANGELOG.md`.
 
 Code, experiment notebooks and result files for
 
@@ -148,6 +148,12 @@ finished. To rebuild the tables and figures from `results/`:
 ```
 python analysis/mktables.py        # LaTeX tables -> analysis/tables/
 python analysis/mkfigs.py          # vector figures -> analysis/figures/
+```
+
+Figure 2 (the visual example) needs one cover image from ALASKA#2:
+
+```
+python analysis/make_fig2_visual.py /path/to/alaska2/Cover/00001.jpg analysis/figures/F6_visual_example.pdf
 ```
 
 ## Hardware used for the paper
